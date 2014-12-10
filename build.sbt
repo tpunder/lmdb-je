@@ -1,0 +1,36 @@
+import com.typesafe.sbt.SbtNativePackager._
+import NativePackagerKeys._
+
+FMPublic
+
+name := "lmdb-je"
+
+organization := "com.eluvio"
+
+version := "0.1.0-SNAPSHOT"
+
+description := "LMDB Java Edition"
+
+homepage := Some(url("https://github.com/eluvio/lmdb-je"))
+
+// For native packager
+packageArchetype.java_application
+
+//javacOptions in Compile ++= Seq("-source", "1.8", "-target", "1.8")
+
+javacOptions in doc ++= Seq("-windowtitle", "lmdb-je", "-sourcepath", "/Users/tim/java-src", "-tag", "implSpec:x", "-tag", "implNote:x", "-tag", "jls:x", "-linkoffline", "http://docs.oracle.com/javase/8/docs/api/", "http://docs.oracle.com/javase/8/docs/api/")
+
+autoScalaLibrary := false
+
+crossPaths := false
+
+EclipseKeys.projectFlavor := EclipseProjectFlavor.Java
+
+testOptions += Tests.Argument(TestFrameworks.JUnit, "-v", "-a")
+
+// Java Dependencies
+libraryDependencies ++= Seq(
+  "com.github.jnr" % "jnr-ffi" % "2.0.1",
+  "com.novocode" % "junit-interface" % "0.11" % "test", // For running Junit tests from SBT
+  "junit" % "junit" % "4.12" % "test"
+)

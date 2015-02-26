@@ -127,6 +127,7 @@ class LMDBMapImpl<K,V> extends LMDBMapInternal<K,V> {
     if (dup) {
       dbFlags = dbFlags | Api.MDB_DUPSORT;
       if (valueSerializer.integerKeys()) dbFlags = dbFlags | Api.MDB_INTEGERDUP;
+      if (valueSerializer.fixedSize()) dbFlags = dbFlags | Api.MDB_DUPFIXED;
     }
     
     final String name = null; // TODO: add future support for named databases

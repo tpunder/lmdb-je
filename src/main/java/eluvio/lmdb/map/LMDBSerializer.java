@@ -18,6 +18,12 @@ public abstract class LMDBSerializer<T> {
   public abstract boolean integerKeys();
   
   /**
+   * Corresponds to the {@link eluvio.lmdb.api.Api#MDB_DUPFIXED} flag (only applicable if using MDB_DUPSORT)
+   * @return true if you want the MDB_DUPFIXED flag set if you are using MDB_DUPSORT
+   */
+  public abstract boolean fixedSize();
+  
+  /**
    * Serialize the object
    * @param data The object to serialize
    * @param buf An optional ByteBuffer that can be passed in that can be used
@@ -45,6 +51,7 @@ public abstract class LMDBSerializer<T> {
   public final static LMDBSerializer<String> String = new LMDBSerializer<String>() {
     public int cachedBufferSize() { return -1; }
     public boolean integerKeys() { return false; }
+    public boolean fixedSize() { return false; }
 
 //    public ByteBuffer serialize(String s, ByteBuffer buf) {
 //      return UTF8.write(s, buf);
@@ -100,6 +107,7 @@ public abstract class LMDBSerializer<T> {
     
     public int cachedBufferSize() { return size; }
     public boolean integerKeys() { return true; }
+    public boolean fixedSize() { return true; }
 
     protected abstract int write(int i);
     protected abstract int read(int i);
@@ -151,6 +159,7 @@ public abstract class LMDBSerializer<T> {
     
     public int cachedBufferSize() { return size; }
     public boolean integerKeys() { return true; }
+    public boolean fixedSize() { return true; }
 
     protected abstract long write(long i);
     protected abstract long read(long i);
@@ -180,6 +189,7 @@ public abstract class LMDBSerializer<T> {
   public final static LMDBSerializer<byte[]> ByteArray = new LMDBSerializer<byte[]>() {
     public int cachedBufferSize() { return -1; }
     public boolean integerKeys() { return false; }
+    public boolean fixedSize() { return false; }
 
     public ByteBuffer serialize(byte[] b, ByteBuffer buf) {
       if (null == buf || buf.remaining() < b.length) buf = ByteBuffer.allocateDirect(b.length);

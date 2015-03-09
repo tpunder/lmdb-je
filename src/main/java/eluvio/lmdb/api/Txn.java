@@ -115,7 +115,10 @@ public class Txn implements AutoCloseable {
    * mdb_txn_abort
    */
   public void abort() {
-    threadCheck();
+    // Ignoring the threadCheck() for now since LMDBEnv.closeTransactions() can call this method
+    // from a thread that is different from the thread that created the transaction.  This is probably
+    // unsafe!!!!!!!
+    //threadCheck();
     if (State.CLOSED == state) throw new RuntimeException("Cannot abort Txn since it is already CLOSED");
     closeCursors();
     Api.instance.mdb_txn_abort(txn);

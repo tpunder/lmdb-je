@@ -11,7 +11,7 @@ import java.util.Map;
  * @param <K> key type
  * @param <V> value type
  */
-public interface LMDBMultiMap<K, V> extends AutoCloseable {
+public interface LMDBMultiMap<K, V> extends LMDBEnv, AutoCloseable {
   boolean add(K key, V value);
 
   K ceilingKey(K key);

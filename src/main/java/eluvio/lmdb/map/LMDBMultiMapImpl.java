@@ -164,4 +164,59 @@ class LMDBMultiMapImpl<K, V> implements LMDBMultiMap<K, V> {
     return map.values();
   }
 
+  @Override
+  public void abortTxn() {
+    map.abortTxn();
+  }
+
+  @Override
+  public void beginTxn() {
+    map.beginTxn();
+  }
+
+  @Override
+  public void beginTxn(boolean readOnly) {
+    map.beginTxn(readOnly);
+  }
+
+  @Override
+  public void commitTxn() {
+    map.commitTxn();
+  }
+
+  @Override
+  public boolean readOnly() {
+    return map.readOnly();
+  }
+
+  @Override
+  public LMDBTxn withExistingReadOnlyTxn() {
+    return map.withExistingReadOnlyTxn();
+  }
+
+  @Override
+  public LMDBTxn withExistingReadWriteTxn() {
+    return map.withExistingReadWriteTxn();
+  }
+
+  @Override
+  public LMDBTxn withExistingTxn() {
+    return map.withExistingTxn();
+  }
+
+  @Override
+  public LMDBTxn withNestedReadWriteTxn() {
+    return map.withNestedReadWriteTxn();
+  }
+
+  @Override
+  public LMDBTxn withReadOnlyTxn() {
+    return map.withReadOnlyTxn();
+  }
+
+  @Override
+  public LMDBTxn withReadWriteTxn() {
+    return map.withReadWriteTxn();
+  }
+
 }

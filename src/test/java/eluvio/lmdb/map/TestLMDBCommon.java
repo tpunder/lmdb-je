@@ -15,12 +15,16 @@ public class TestLMDBCommon {
   
   @Test
   public void testAssertionsEnabled() {
+    boolean enabled = true;
+    
     try {
       assert false;
-      fail();
+      enabled = false;
     } catch(AssertionError ex) {
-      // good
+      
     }
+    
+    if (!enabled) fail("Java asserts are not enabled!");
   }
   
   protected <T> void checkKeySet(T[] expected, LMDBKeySet<T> set) {

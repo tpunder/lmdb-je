@@ -20,6 +20,12 @@ packageArchetype.java_application
 
 javacOptions in doc ++= Seq("-windowtitle", "lmdb-je", "-sourcepath", "/Users/tim/java-src", "-tag", "implSpec:x", "-tag", "implNote:x", "-tag", "jls:x", "-linkoffline", "http://docs.oracle.com/javase/8/docs/api/", "http://docs.oracle.com/javase/8/docs/api/")
 
+// Fork for tests for we can enable assertions
+fork in Test := true
+
+// Enable assertions
+javaOptions in Test += "-ea"
+
 autoScalaLibrary := false
 
 crossPaths := false

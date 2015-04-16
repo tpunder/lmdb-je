@@ -1,5 +1,7 @@
 package eluvio.lmdb.api;
 
+import java.util.List;
+import java.util.LinkedList;
 import java.util.concurrent.ConcurrentHashMap;
 
 import jnr.ffi.Pointer;
@@ -23,6 +25,7 @@ public class Txn implements AutoCloseable {
   private final Thread thread;
   public final boolean readOnly;
   protected volatile State state;
+  protected volatile List<Runnable> onAbortOrCommit = null;
   
   /**
    * We want to make sure cursors get closed with when the transaction is
@@ -109,6 +112,7 @@ public class Txn implements AutoCloseable {
     closeCursors();
     ApiErrors.checkError("mdb_txn_commit", Api.instance.mdb_txn_commit(txn));
     state = State.CLOSED;
+    runAbortOrCommitCallbacks();
   }
   
   /**
@@ -123,6 +127,7 @@ public class Txn implements AutoCloseable {
     closeCursors();
     Api.instance.mdb_txn_abort(txn);
     state = State.CLOSED;
+    runAbortOrCommitCallbacks();
   }
   
   /**
@@ -202,7 +207,7 @@ public class Txn implements AutoCloseable {
   }
   
   void registerCursor(Cursor c) {
-    assert null == cursors ^ null == currentCursor;
+    assert null == cursors || null == currentCursor;
     
     // We should be using either the currentCursor or the cursors variable
     if (null != cursors) {
@@ -222,7 +227,7 @@ public class Txn implements AutoCloseable {
   }
   
   void deregisterCursor(Cursor c) {
-    assert null == cursors ^ null == currentCursor;
+    assert null == cursors || null == currentCursor;
     
     if (c == currentCursor) {
       currentCursor = null;
@@ -234,7 +239,7 @@ public class Txn implements AutoCloseable {
   }
   
   private void closeCursors() {
-    assert null == cursors ^ null == currentCursor;
+    assert null == cursors || null == currentCursor;
     
     if (null != currentCursor) {
       currentCursor.close();
@@ -248,5 +253,20 @@ public class Txn implements AutoCloseable {
       
       cursors = null;
     }
+  }
+  
+  public void onAbortOrCommit(Runnable callback) {
+    if (null == onAbortOrCommit) onAbortOrCommit = new LinkedList<Runnable>();
+    onAbortOrCommit.add(callback);
+  }
+  
+  private void runAbortOrCommitCallbacks() {
+    if (null == onAbortOrCommit) return;
+    
+    for (Runnable callback : onAbortOrCommit) {
+      callback.run();
+    }
+    
+    onAbortOrCommit = null;
   }
 }

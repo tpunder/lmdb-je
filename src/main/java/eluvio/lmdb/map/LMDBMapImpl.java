@@ -247,7 +247,7 @@ class LMDBMapImpl<K,V> extends LMDBMapInternal<K,V> {
   class CursorImpl implements LMDBCursor<K,V> {
     private final LMDBTxnInternal txn;
     private final Cursor cursor;
-    private AtomicBoolean cursorClosed = new AtomicBoolean(false);
+    private final AtomicBoolean cursorClosed = new AtomicBoolean(false);
     
     public CursorImpl(LMDBCursor.Mode mode) {
       switch(mode) {

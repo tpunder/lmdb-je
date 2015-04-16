@@ -2,6 +2,7 @@ package eluvio.lmdb.api;
 
 import java.nio.ByteBuffer;
 import java.util.Comparator;
+import java.util.concurrent.locks.ReentrantLock;
 
 import eluvio.lmdb.api.Api.MDB_val;
 import jnr.ffi.Pointer;
@@ -13,6 +14,18 @@ public class DB {
   protected final MDBComparator keyComparator;
   protected final MDBComparator dupComparator;
   protected final boolean dupsort;
+  
+  /** The txn that has a pending mdb_dbi_open call we are waiting to commit() or abort() */
+  private static volatile Txn pendingOpeningTxn = null;
+  
+  private static ReentrantLock pendingOpeningLock = new ReentrantLock();
+  
+  private static Runnable onAbortOrCommitCallback = new Runnable() {
+    public void run() {
+      pendingOpeningTxn = null;
+      pendingOpeningLock.unlock();
+    }
+  };
   
   protected static class MDBComparator implements Api.MDB_cmp_func {
     private final Comparator<ByteBuffer> comparator;
@@ -128,7 +141,26 @@ public class DB {
     
     this.env = txn.env;
     final IntByReference ref = new IntByReference();
+    
+    // From the LMDB docs about mdb_dbi_open():
+    //
+    // This function must not be called from multiple concurrent
+    // transactions in the same process. A transaction that uses
+    // this function must finish (either commit or abort) before
+    // any other transaction in the process may use this function.
+    pendingOpeningLock.lock();
+    
+    if (null != pendingOpeningTxn) {
+      // If we are re-entering this thread (because we are in the same thread) then make sure it's the same transaction
+      if (pendingOpeningTxn != txn) throw new AssertionError("Re-entering DB constructor with different txn!  pendingOpeningTxn: "+pendingOpeningTxn+"  txn: "+txn);
+    } else {
+      // Only register the the callback if we aren't re-entering
+      pendingOpeningTxn = txn;
+      txn.onAbortOrCommit(onAbortOrCommitCallback);
+    }
+    
     ApiErrors.checkError("mdb_dbi_open", Api.instance.mdb_dbi_open(txn.txn, name, flags, ref));
+    
     dbi = ref.getValue();
     
     if (null != keyComparator) {

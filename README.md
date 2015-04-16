@@ -21,6 +21,8 @@ Native Library
 
 LMDB-JE comes bundled with LMDB binaries for Mac OSX x86_64 and Linux x86_64 that have been compiled with "-DMDB_MAXKEYSIZE=0".  If you are using a different OS/CPU combo then you can provide your own LMDB library by specifying either an environment variable (LMDB_LIB_PATH) or a Java System Property (lmdb_lib_path) that points to the LMDB library (e.g. /path/to/liblmdb.so).
 
+    CPPFLAGS="-DMDB_MAXKEYSIZE=0" make
+
 API Usage
 ---------
 

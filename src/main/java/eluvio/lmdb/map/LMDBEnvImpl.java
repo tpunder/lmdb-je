@@ -36,6 +36,10 @@ class LMDBEnvImpl extends LMDBEnvInternal {
   };
 
   public LMDBEnvImpl(File path, boolean readOnly, long mapsize) {
+    this(path, readOnly, mapsize, 0 /* maxdbs */);
+  }
+  
+  public LMDBEnvImpl(File path, boolean readOnly, long mapsize, int maxdbs) {
     this.readOnly = readOnly;
 
     final int readOnlyFlag = readOnly ? Api.MDB_RDONLY : 0;
@@ -64,6 +68,7 @@ class LMDBEnvImpl extends LMDBEnvInternal {
     this.path = path;
 
     env = new Env();
+    if (maxdbs > 0) env.setMaxDBs(maxdbs); // 0 == no named databases, > 0 == Named databases
     env.setMapSize(mapsize);
     env.open(path.toString(), readOnlyFlag | envFlags);
 

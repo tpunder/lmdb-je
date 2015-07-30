@@ -24,6 +24,7 @@ class LMDBMapImpl<K,V> extends LMDBMapInternal<K,V> {
   private final LMDBKeySet<K> keySet;
   private final LMDBEntrySet<K,V> entrySet;
   private final LMDBValuesCollection<V> values;
+  private final String name;
   
   private final Comparator<V> externalValueComparator = new Comparator<V>() {
     @Override
@@ -108,13 +109,18 @@ class LMDBMapImpl<K,V> extends LMDBMapInternal<K,V> {
   }
   
   LMDBMapImpl(LMDBEnvInternal env, LMDBSerializer<K> keySerializer, LMDBSerializer<V> valueSerializer, Comparator<K> keyComparator, Comparator<V> valueComparator, boolean dup) {
+    this(env, null, keySerializer, valueSerializer, keyComparator, valueComparator, dup);
+  }
+  
+  LMDBMapImpl(LMDBEnvInternal env, String name, LMDBSerializer<K> keySerializer, LMDBSerializer<V> valueSerializer, Comparator<K> keyComparator, Comparator<V> valueComparator, boolean dup) {
     this.dup = dup;
     this.env = env;
     this.keySerializer = keySerializer;
     this.valueSerializer = valueSerializer;
     this.keyComparator = keyComparator;
     this.valueComparator = valueComparator;
-
+    this.name = name;
+    
     final int readOnlyFlag = env.readOnly() ? Api.MDB_RDONLY : 0;
         
     Txn txn = env.env().beginTxn(readOnlyFlag);
@@ -130,7 +136,10 @@ class LMDBMapImpl<K,V> extends LMDBMapInternal<K,V> {
       if (valueSerializer.fixedSize()) dbFlags = dbFlags | Api.MDB_DUPFIXED;
     }
     
-    final String name = null; // TODO: add future support for named databases
+    if (null != name && !env.readOnly()) {
+      // Create the named database if it doesn't exist. This option is not allowed in a read-only transaction or a read-only environment.
+      dbFlags = dbFlags | Api.MDB_CREATE;
+    }
     
     db = new DB(txn, name, dbFlags, comparator, dupComparator);
     
@@ -1232,6 +1241,10 @@ class LMDBMapImpl<K,V> extends LMDBMapInternal<K,V> {
   
   void assertWritable() {
     if (env.readOnly()) throw new UnsupportedOperationException("This map is marked as read-only!");
+  }
+  
+  public String getName() {
+    return name;
   }
 
   @Override

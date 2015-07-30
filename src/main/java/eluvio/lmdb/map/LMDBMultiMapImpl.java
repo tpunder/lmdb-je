@@ -7,7 +7,11 @@ class LMDBMultiMapImpl<K, V> implements LMDBMultiMap<K, V> {
   final LMDBMapInternal<K, V> map;
 
   public LMDBMultiMapImpl(LMDBEnvInternal env, LMDBSerializer<K> keySerializer, LMDBSerializer<V> valueSerializer, Comparator<K> keyComparator, Comparator<V> valueComparator) {
-    this(new LMDBMapImpl<K, V>(env, keySerializer, valueSerializer, keyComparator, valueComparator, true));
+    this(env, null, /* name */ keySerializer, valueSerializer, keyComparator, valueComparator);
+  }
+  
+  public LMDBMultiMapImpl(LMDBEnvInternal env, String name, LMDBSerializer<K> keySerializer, LMDBSerializer<V> valueSerializer, Comparator<K> keyComparator, Comparator<V> valueComparator) {
+    this(new LMDBMapImpl<K, V>(env, name, keySerializer, valueSerializer, keyComparator, valueComparator, true /* dup */));
   }
 
   public LMDBMultiMapImpl(LMDBMapInternal<K, V> map) {

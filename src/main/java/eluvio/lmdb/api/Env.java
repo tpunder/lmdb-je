@@ -55,6 +55,52 @@ public class Env implements AutoCloseable {
     if (State.INIT != state) throw new RuntimeException("Can only call setMaxDBs if the environment has not been opened");
     ApiErrors.checkError("mdb_env_set_maxdbs", Api.instance.mdb_env_set_maxdbs(env, dbs));
   }
+  
+  /**
+   * Enable the MDB_NOMETASYNC flag
+   */
+  public void disableMetaSync() {
+    setFlags(Api.MDB_NOMETASYNC, true);
+  }
+  
+  /**
+   * Disable the MDB_NOMETASYNC flag
+   * 
+   * Flush system buffers to disk only once per transaction, omit the metadata flush. Defer 
+   * that until the system flushes files to disk, or next non-MDB_RDONLY commit or mdb_env_sync(). 
+   * This optimization maintains database integrity, but a system crash may undo the last 
+   * committed transaction. I.e. it preserves the ACI (atomicity, consistency, isolation) but 
+   * not D (durability) database property.
+   */
+  public void enableMetaSync() {
+    setFlags(Api.MDB_NOMETASYNC, false);
+  }
+  
+  /**
+   * Enable the MDB_NOSYNC flag
+   * 
+   * Don't flush system buffers to disk when committing a transaction. This optimization means a
+   * system crash can corrupt the database or lose the last transactions if buffers are not yet 
+   * flushed to disk. The risk is governed by how often the system flushes dirty buffers to disk 
+   * and how often mdb_env_sync() is called. However, if the filesystem preserves write order and 
+   * the MDB_WRITEMAP flag is not used, transactions exhibit ACI (atomicity, consistency, 
+   * isolation) properties and only lose D (durability). I.e. database integrity is maintained, 
+   * but a system crash may undo the final transactions.
+   */
+  public void disableSync() {
+    setFlags(Api.MDB_NOSYNC, true);
+  }
+  
+  /**
+   * Disable the MDB_NOSYNC flag
+   */
+  public void enableSync() {
+    setFlags(Api.MDB_NOSYNC, false);
+  }
+  
+  private void setFlags(int flags, boolean enableOrDisable) {
+    ApiErrors.checkError("mdb_env_set_flags", Api.instance.mdb_env_set_flags(env, flags, enableOrDisable ? 1 : 0));
+  }
 
   public void open(String path) {
     open(path, 0);

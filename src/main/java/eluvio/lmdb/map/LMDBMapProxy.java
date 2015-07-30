@@ -442,4 +442,24 @@ class LMDBMapProxy<K, V> extends LMDBMapInternal<K, V> {
   LMDBSerializer<V> valueSerializer() {
     return self.valueSerializer();
   }
+  
+  @Override
+  public void disableMetaSync() {
+    self.disableMetaSync();
+  }
+  
+  @Override
+  public void enableMetaSync() {
+    self.enableMetaSync();
+  }
+  
+  @Override
+  public void disableSync() {
+    self.disableSync();
+  }
+  
+  @Override
+  public void enableSync() {
+    self.enableSync();
+  }
 }

@@ -449,4 +449,24 @@ class LMDBMultiSetView<V> extends LMDBMultiSetInternal<V> {
 
     return isGood;
   }
+  
+  @Override
+  public void disableMetaSync() {
+    set.disableMetaSync();
+  }
+  
+  @Override
+  public void enableMetaSync() {
+    set.enableMetaSync();
+  }
+  
+  @Override
+  public void disableSync() {
+    set.disableSync();
+  }
+  
+  @Override
+  public void enableSync() {
+    set.enableSync();
+  }
 }

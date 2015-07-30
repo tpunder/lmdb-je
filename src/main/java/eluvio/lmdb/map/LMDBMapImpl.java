@@ -1268,4 +1268,24 @@ class LMDBMapImpl<K,V> extends LMDBMapInternal<K,V> {
       db.close();
     }
   }
+  
+  @Override
+  public void disableMetaSync() {
+    env.disableMetaSync();
+  }
+  
+  @Override
+  public void enableMetaSync() {
+    env.enableMetaSync();
+  }
+  
+  @Override
+  public void disableSync() {
+    env.disableSync();
+  }
+  
+  @Override
+  public void enableSync() {
+    env.enableSync();
+  }
 }

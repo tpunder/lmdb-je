@@ -32,6 +32,10 @@ public abstract class LMDBEnvTemplate implements LMDBEnv {
     this(null, false, LMDBEnv.DEFAULT_MAPSIZE);
   }
   
+  public LMDBEnvTemplate(File path) {
+    this(path, false /* readOnly */, LMDBEnv.DEFAULT_MAPSIZE);
+  }
+  
   public LMDBEnvTemplate(File path, boolean readOnly) {
     this(path, readOnly, LMDBEnv.DEFAULT_MAPSIZE);
   }
@@ -146,5 +150,25 @@ public abstract class LMDBEnvTemplate implements LMDBEnv {
   @Override
   final public LMDBTxn withReadWriteTxn() {
     return env.withReadWriteTxn();
-  }  
+  }
+  
+  @Override
+  public void disableMetaSync() {
+    env.disableMetaSync();
+  }
+  
+  @Override
+  public void enableMetaSync() {
+    env.enableMetaSync();
+  }
+  
+  @Override
+  public void disableSync() {
+    env.disableSync();
+  }
+  
+  @Override
+  public void enableSync() {
+    env.enableSync();
+  }
 }

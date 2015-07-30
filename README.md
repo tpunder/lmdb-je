@@ -47,3 +47,4 @@ License
 
 * LMDB-JE is licensed under: [Apache License, Version 2.0](http://www.apache.org/licenses/LICENSE-2.0.txt)
 * LMDB is licensed under the [OpenLDAP License](http://www.openldap.org/software/release/license.html)
+

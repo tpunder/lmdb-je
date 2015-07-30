@@ -15,6 +15,8 @@
  */
 package eluvio.lmdb.map;
 
+import eluvio.lmdb.api.Api;
+
 public interface LMDBEnv extends AutoCloseable {
   /**
    * By default we set mdb_env_set_mapsize to 1TB which should be large enough
@@ -73,4 +75,38 @@ public interface LMDBEnv extends AutoCloseable {
   LMDBTxn withReadOnlyTxn();
   
   LMDBTxn withReadWriteTxn();
+  
+  /**
+   * Enable the MDB_NOMETASYNC flag
+   */
+  public void disableMetaSync();
+  
+  /**
+   * Disable the MDB_NOMETASYNC flag
+   * 
+   * Flush system buffers to disk only once per transaction, omit the metadata flush. Defer 
+   * that until the system flushes files to disk, or next non-MDB_RDONLY commit or mdb_env_sync(). 
+   * This optimization maintains database integrity, but a system crash may undo the last 
+   * committed transaction. I.e. it preserves the ACI (atomicity, consistency, isolation) but 
+   * not D (durability) database property.
+   */
+  public void enableMetaSync();
+  
+  /**
+   * Enable the MDB_NOSYNC flag
+   * 
+   * Don't flush system buffers to disk when committing a transaction. This optimization means a
+   * system crash can corrupt the database or lose the last transactions if buffers are not yet 
+   * flushed to disk. The risk is governed by how often the system flushes dirty buffers to disk 
+   * and how often mdb_env_sync() is called. However, if the filesystem preserves write order and 
+   * the MDB_WRITEMAP flag is not used, transactions exhibit ACI (atomicity, consistency, 
+   * isolation) properties and only lose D (durability). I.e. database integrity is maintained, 
+   * but a system crash may undo the final transactions.
+   */
+  void disableSync();
+  
+  /**
+   * Disable the MDB_NOSYNC flag
+   */
+  void enableSync();
 }

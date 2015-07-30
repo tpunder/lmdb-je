@@ -222,4 +222,24 @@ class LMDBMultiSetReversed<V> extends LMDBMultiSetInternal<V> {
   LMDBSerializer<V> valueSerializer() {
     return set.valueSerializer();
   }
+  
+  @Override
+  public void disableMetaSync() {
+    set.disableMetaSync();
+  }
+  
+  @Override
+  public void enableMetaSync() {
+    set.enableMetaSync();
+  }
+  
+  @Override
+  public void disableSync() {
+    set.disableSync();
+  }
+  
+  @Override
+  public void enableSync() {
+    set.enableSync();
+  }
 }

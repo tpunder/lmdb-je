@@ -335,4 +335,24 @@ class LMDBMultiSetImpl<K, V> extends LMDBMultiSetInternal<V> {
   LMDBSerializer<V> valueSerializer() {
     return map.valueSerializer();
   }
+  
+  @Override
+  public void disableMetaSync() {
+    map.disableMetaSync();
+  }
+  
+  @Override
+  public void enableMetaSync() {
+    map.enableMetaSync();
+  }
+  
+  @Override
+  public void disableSync() {
+    map.disableSync();
+  }
+  
+  @Override
+  public void enableSync() {
+    map.enableSync();
+  }
 }

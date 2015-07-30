@@ -70,10 +70,12 @@ class LMDBEnvImpl extends LMDBEnvInternal {
       } catch (IOException ex) {
         throw new UncheckedIOException(ex);
       }
+      
       // We also specify MDB_NOSYNC since we don't care if or when data is
-      // written to disk this database is thrown away.
+      // written to disk since this database is thrown away.
       envFlags = envFlags | Api.MDB_NOSUBDIR | Api.MDB_NOSYNC;
       deleteOnClose = true;
+      
       // System.out.println("Using temp: "+path);
     } else {
       if (!path.isDirectory()) throw new IllegalArgumentException("Path must be a directory");
@@ -202,5 +204,25 @@ class LMDBEnvImpl extends LMDBEnvInternal {
   public LMDBTxnInternal withReadWriteTxn() {
     assertWritable();
     return currentTxn.get().withReadWriteTxn();
+  }
+  
+  @Override
+  public void disableMetaSync() {
+    env.disableMetaSync();
+  }
+  
+  @Override
+  public void enableMetaSync() {
+    env.enableMetaSync();
+  }
+  
+  @Override
+  public void disableSync() {
+    env.disableSync();
+  }
+  
+  @Override
+  public void enableSync() {
+    env.enableSync();
   }
 }

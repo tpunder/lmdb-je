@@ -19,16 +19,30 @@ import java.io.File;
 import java.util.Comparator;
 import java.util.Map;
 
-import eluvio.lmdb.map.LMDBMap;
-import eluvio.lmdb.map.LMDBComparator;
-import eluvio.lmdb.map.LMDBIterator;
-import eluvio.lmdb.map.LMDBMapStandalone;
-import eluvio.lmdb.map.LMDBSerializer;
+import eluvio.lmdb.map.*;
 
 public class Test {
+  
+  public static class TestEnv extends LMDBEnvTemplate {
+    public LMDBMap<String,Integer> main = new LMDBMapTemplate<String,Integer>("main", LMDBSerializer.String, LMDBSerializer.Int);
+    public LMDBMultiMap<Integer,String> index = new LMDBMultiMapTemplate<Integer,String>("index", LMDBSerializer.Int, LMDBSerializer.String);
+  }
+  
   public static void main(String[] args) {
-    benchWrite("Warm", 100000);
-    benchWrite("Bench", 1000000);
+    //benchWrite("Warm", 100000);
+    //benchWrite("Bench", 1000000);
+    
+    try(TestEnv env = new TestEnv()) {
+      try(LMDBTxn txn = env.withReadWriteTxn()) {
+        env.main.add("foo", 123);
+        env.index.add(123, "foo");
+        
+        env.main.add("bar", 321);
+        env.index.add(321, "bar");
+      }
+      
+      
+    }
   }
   
 //  public static void mainThreadTest(String[] args) {

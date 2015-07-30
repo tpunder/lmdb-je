@@ -20,7 +20,7 @@ packageArchetype.java_application
 
 javacOptions in doc ++= Seq("-windowtitle", "lmdb-je", "-sourcepath", "/Users/tim/java-src", "-tag", "implSpec:x", "-tag", "implNote:x", "-tag", "jls:x", "-linkoffline", "http://docs.oracle.com/javase/8/docs/api/", "http://docs.oracle.com/javase/8/docs/api/")
 
-// Fork for tests for we can enable assertions
+// Fork for tests so we can enable assertions
 fork in Test := true
 
 // Enable assertions
@@ -36,7 +36,7 @@ testOptions += Tests.Argument(TestFrameworks.JUnit, "-v", "-a")
 
 // Java Dependencies
 libraryDependencies ++= Seq(
-  "com.github.jnr" % "jnr-ffi" % "2.0.1",
+  "com.github.jnr" % "jnr-ffi" % "2.0.3",
   "com.novocode" % "junit-interface" % "0.11" % "test", // For running Junit tests from SBT
   "junit" % "junit" % "4.12" % "test"
 )

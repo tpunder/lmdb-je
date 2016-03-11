@@ -102,10 +102,10 @@ public class Test {
   private static void benchWrite(String msg, int count) {
     final long start = System.currentTimeMillis();
 
-//    try (final LMDBMapStandAlone<String,String> map = new LMDBMapStandAlone<String,String>(LMDBMapImpl.StringSerializer, LMDBMap.StringSerializer)) {
+//    try (final LMDBMapStandalone<String,String> map = new LMDBMapStandalone<String,String>(LMDBMapImpl.StringSerializer, LMDBMap.StringSerializer)) {
     try (final LMDBMapStandalone<String,String> map = new LMDBMapStandalone<String,String>(new File("/Users/tim/tmp/lmdb_byte_db"), LMDBSerializer.String, LMDBSerializer.String)) {
-//    try (final LMDBMapStandAlone<String,String> map = new LMDBMapStandAlone<String,String>(new File("/Users/tim/tmp/lmdb_byte_db"), LMDBMap.StringSerializer, LMDBMap.StringSerializer, String.CASE_INSENSITIVE_ORDER)) {
-//    try (final LMDBMapStandAlone<String,String> map = new LMDBMapStandAlone<String,String>(new File("/Users/tim/tmp/lmdb_byte_db"), LMDBMap.StringSerializer, LMDBMap.StringSerializer, LMDBMapComparator.CASE_SENSITIVE_STRING_COMPARATOR)) {
+//    try (final LMDBMapStandalone<String,String> map = new LMDBMapStandalone<String,String>(new File("/Users/tim/tmp/lmdb_byte_db"), LMDBMap.StringSerializer, LMDBMap.StringSerializer, String.CASE_INSENSITIVE_ORDER)) {
+//    try (final LMDBMapStandalone<String,String> map = new LMDBMapStandalone<String,String>(new File("/Users/tim/tmp/lmdb_byte_db"), LMDBMap.StringSerializer, LMDBMap.StringSerializer, LMDBMapComparator.CASE_SENSITIVE_STRING_COMPARATOR)) {
       final String keyPrefix = "Lorem ipsum dolor sit amet, consectetur adipiscing elit";
       final String valuePrefix = "Donec ac odio lacus. Nullam finibus vehicula magna id bibendum. Mauris mattis neque eleifend nisl finibus, et commodo sem suscipit. Praesent ac suscipit lorem, a congue felis. Proin at tellus fermentum, posuere massa id, condimentum sapien. Vestibulum quis leo quam. Aenean ut enim eleifend, feugiat magna sed, aliquam ligula. Proin placerat eros vitae augue laoreet, non finibus neque ullamcorper. Donec purus elit, faucibus at augue ac, rhoncus finibus enim. Morbi ac suscipit dui, vel eleifend arcu. Etiam ipsum velit, rutrum et nisl a, eleifend tristique eros. Mauris imperdiet lacus non pretium ullamcorper. Praesent dictum tempor mauris, efficitur elementum sapien elementum at. Maecenas rhoncus mollis lorem, sed semper nisl ornare porta.";
       

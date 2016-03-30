@@ -36,7 +36,7 @@ testOptions += Tests.Argument(TestFrameworks.JUnit, "-v", "-a")
 
 // Java Dependencies
 libraryDependencies ++= Seq(
-  "com.github.jnr" % "jnr-ffi" % "2.0.3",
+  "com.github.jnr" % "jnr-ffi" % "2.0.9",
   "com.novocode" % "junit-interface" % "0.11" % "test", // For running Junit tests from SBT
   "junit" % "junit" % "4.12" % "test"
 )

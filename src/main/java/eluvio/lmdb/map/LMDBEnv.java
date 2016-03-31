@@ -27,6 +27,11 @@ public interface LMDBEnv extends AutoCloseable {
   final static long DEFAULT_MAPSIZE = 1099511627776L; // 1TB
 
   /**
+   * The maximum numbers of readers we can have accessing the DB
+   */
+  final static int DEFAULT_MAXREADERS = 4096;
+  
+  /**
    * Abort the current transaction for this thread
    */
   void abortTxn();

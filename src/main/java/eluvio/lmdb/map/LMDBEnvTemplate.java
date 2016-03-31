@@ -45,7 +45,11 @@ public abstract class LMDBEnvTemplate implements LMDBEnv {
   }
   
   public LMDBEnvTemplate(File path, boolean readOnly, long mapsize, int maxdbs) {
-    this.env = new LMDBEnvImpl(path, readOnly, mapsize, maxdbs);
+    this(path, readOnly, mapsize, maxdbs, LMDBEnv.DEFAULT_MAXREADERS);
+  }
+  
+  public LMDBEnvTemplate(File path, boolean readOnly, long mapsize, int maxdbs, int maxReaders) {
+    this.env = new LMDBEnvImpl(path, readOnly, mapsize, maxdbs, maxReaders);
     this.maps = Collections.synchronizedSet(new HashSet<LMDBMap<?,?>>());
     this.multiMaps = Collections.synchronizedSet(new HashSet<LMDBMultiMap<?,?>>());
   }

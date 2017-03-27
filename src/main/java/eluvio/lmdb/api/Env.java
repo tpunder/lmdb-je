@@ -18,6 +18,8 @@ package eluvio.lmdb.api;
 import jnr.ffi.Pointer;
 import jnr.ffi.byref.PointerByReference;
 
+import java.io.File;
+
 public class Env implements AutoCloseable {
   private static enum State { INIT, OPEN, CLOSED }
   
@@ -112,6 +114,12 @@ public class Env implements AutoCloseable {
   
   public synchronized void open(String path, int flags, int mode) {
     if (State.INIT != state) throw new RuntimeException("Env is either already open or is closed");
+
+    // This is the directory we expect the database to live in
+    File baseDir = (flags & Api.MDB_NOSUBDIR) == Api.MDB_NOSUBDIR ? new File(path).getParentFile() : new File(path);
+
+    // The baseDir is required to exist
+    if (!baseDir.isDirectory()) throw new RuntimeException("Invalid Path for database.  Expected a directory: "+path);
     
     final int rc = Api.instance.mdb_env_open(env, path, flags, mode);
     

@@ -7,7 +7,7 @@ name := "lmdb-je"
 
 organization := "com.eluvio"
 
-version := "0.1.0-SNAPSHOT"
+version := "0.1.0"
 
 description := "LMDB Java Edition"
 

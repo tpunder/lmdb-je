@@ -7,8 +7,6 @@ name := "lmdb-je"
 
 organization := "com.eluvio"
 
-version := "0.2.0-SNAPSHOT"
-
 description := "LMDB Java Edition"
 
 homepage := Some(url("https://github.com/eluvio/lmdb-je"))

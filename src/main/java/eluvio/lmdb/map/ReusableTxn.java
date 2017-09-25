@@ -55,6 +55,8 @@ final class ReusableTxn implements AutoCloseable {
   private final LMDBTxnInternal ReadOnlyTxn = new LMDBTxnImpl() {
     public void abort() { /* do nothing */ }
     public void close() {
+      if (txn == null) throw new IllegalStateException("Expected txn to not be null");
+		
       if (txn.isOpen()) {
         --readOnlyDepth;
         if (readOnlyDepth < 0) throw new IllegalStateException("readOnlyDepth is less than zero: "+readOnlyDepth);

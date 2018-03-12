@@ -28,8 +28,6 @@ autoScalaLibrary := false
 
 crossPaths := false
 
-EclipseKeys.projectFlavor := EclipseProjectFlavor.Java
-
 testOptions += Tests.Argument(TestFrameworks.JUnit, "-v", "-a")
 
 // Java Dependencies

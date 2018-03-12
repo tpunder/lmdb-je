@@ -188,7 +188,7 @@ public interface Api {
   @IgnoreError int mdb_cursor_get(Pointer cursor, MDB_val key, MDB_val data, CursorOp op);
   @IgnoreError int mdb_cursor_put(Pointer cursor, MDB_val key, MDB_val data, int flags);
   @IgnoreError int mdb_cursor_del(Pointer cursor, int flags);
-  @IgnoreError int mdb_cursor_count(Pointer cursor, @Out @size_t NumberByReference countp);
+  @IgnoreError int mdb_cursor_count(Pointer cursor, @Out NumberByReference countp);
   
   @IgnoreError int mdb_reader_check(Pointer env, @Out IntByReference dead);
 }

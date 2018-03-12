@@ -18,6 +18,7 @@ package eluvio.lmdb.api;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.AccessDeniedException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -101,7 +102,15 @@ class Loader {
       final Path tmp = Files.createTempFile("lmdb-je", "liblmdb.so");
       Files.copy(is, tmp, StandardCopyOption.REPLACE_EXISTING);
       final Api api = load(tmp.toString());
-      Files.delete(tmp);
+
+      // Win32 Files.delete doesn't handle this well, since the file is still used in LibraryLoader
+      //   so add a File.deleteOnExit() if this fails
+      try {
+        Files.delete(tmp);
+      } catch (AccessDeniedException ex) {
+        tmp.toFile().deleteOnExit();
+      }
+
       return api;
     } catch (IOException ex) {
       logger().log(Level.SEVERE, "Caught Exception", ex);

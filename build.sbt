@@ -12,7 +12,7 @@ description := "LMDB Java Edition"
 homepage := Some(url("https://github.com/eluvio/lmdb-je"))
 
 // For native packager
-packageArchetype.java_application
+enablePlugins(JavaAppPackaging)
 
 //javacOptions in Compile ++= Seq("-source", "1.8", "-target", "1.8")
 

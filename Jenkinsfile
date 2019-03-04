@@ -6,7 +6,7 @@ node {
   stage 'Build'
 
   wrap([$class: 'AnsiColorBuildWrapper', 'colorMapName': 'XTerm']) {
-    sh "${tool name: 'sbt', type: 'org.jvnet.hudson.plugins.SbtPluginBuilder$SbtInstallation'}/bin/sbt clean compile"
+    sh "${tool name: 'sbt', type: 'org.jvnet.hudson.plugins.SbtPluginBuilder$SbtInstallation'}/bin/sbt clean update compile"
   }
 
   stage 'Test'

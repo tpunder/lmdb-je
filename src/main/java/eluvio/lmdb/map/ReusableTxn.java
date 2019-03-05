@@ -111,11 +111,11 @@ final class ReusableTxn implements AutoCloseable {
   }
   
   /**
-   * Aborts all outstanding transaction (including parent transactions)
+   * Close all outstanding transaction (including parent transactions)
    */
   public void close() {
     while (null != txn) {
-      txn.abort();
+      txn.close();
       txn = txn.parent;
     }
     

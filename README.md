@@ -22,6 +22,21 @@ Native Library
 LMDB-JE comes bundled with LMDB binaries for Mac OSX x86_64 and Linux x86_64 that have been compiled with "-DMDB_MAXKEYSIZE=0".  If you are using a different OS/CPU combo then you can provide your own LMDB library by specifying either an environment variable (LMDB_LIB_PATH) or a Java System Property (lmdb_lib_path) that points to the LMDB library (e.g. /path/to/liblmdb.so).
 
     CPPFLAGS="-DMDB_MAXKEYSIZE=0" make
+    
+Linux, and Windows Libaries are built using: [dockcross](https://github.com/dockcross/dockcross)
+
+Helper runtime scripts were created via:
+
+    docker run --rm dockcross/linux-x64 > ./dockcross-linux-x64
+    chmod +x ./dockcross-linux-x64
+    docker run --rm dockcross/windows-static-x64 > ./dockcross-windows-static-x64
+    chmod +x ./dockcross-windows-static-x64
+
+To rebuild the native lmdb libraries (from OSX) simply run `make all` from the top level project directory.  This does:
+
+1. Checks out the current liblmdb sources from https://github.com/lmdb/lmdb
+2. Runs `make CPP_FLAGS="-DMDB_MAXKEYSIZE=0" -e clean all` for Linux, OSX, and Windows
+3. Copies the resulting `liblmdb.so` to the appropriate `src/main/resources/lmdb-je/[platform]_x86_64` folder.
 
 API Usage
 ---------

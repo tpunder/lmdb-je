@@ -178,7 +178,7 @@ public class TestLMDBMultiMap extends TestLMDBCommon {
     }
   }
   
-  private LMDBMultiMap <Long,Long> makeLongLongMap() {
+  private LMDBMultiMapStandalone <Long,Long> makeLongLongMap() {
     final LMDBMultiMapStandalone<Long,Long> map = new LMDBMultiMapStandalone<Long,Long>(LMDBSerializer.Long, LMDBSerializer.Long);
     
     map.add(Long.MIN_VALUE, Long.MIN_VALUE);
@@ -259,164 +259,184 @@ public class TestLMDBMultiMap extends TestLMDBCommon {
   
   @Test
   public void reversedNavigableMap() {
-    try (LMDBMultiMap<Long,Long> map = makeLongLongMap().descendingMap()) {
-      assertEquals(20003, map.keyCount());
-      assertEquals(20003 * VALUES_PER_KEY, map.valueCount());
-      assertEquals(20003 * VALUES_PER_KEY, map.size());
-      
-      first(map, Long.MAX_VALUE);
-      last(map, Long.MIN_VALUE);
-      
-      ceiling(map, 0L, 0L);
-      higher(map, -1L, 0L);
-      floor(map, 0L, 0L);
-      lower(map, 1L, 0L);
-      
-      ceiling(map, 1000L, 1000L);
-      higher(map, 999L, 1000L);
-      floor(map, 1000L, 1000L);
-      lower(map, 1001L, 1000L);
-      
-      ceiling(map, -1000L, -1000L);
-      higher(map, -1001L, -1000L);
-      floor(map, -1000L, -1000L);
-      lower(map, -999L, -1000L);
-      
-      ceiling(map, Long.MIN_VALUE, -32_768L);
-      higher(map, Long.MIN_VALUE, -32_768L);
-      floor(map, -10_000L, -32_768L);
-      lower(map, -10_000L, -32_768L);
+    // Note: We must retain a references to the LMDBMultiMapStandalone so it doesn't get garbage collected and close
+    //       all of our outstanding transactions before we are done using it.
+    // TODO: Come up with a better way to handle this
+    try (LMDBMultiMapStandalone<Long,Long> env = makeLongLongMap()) {
+      try (LMDBMultiMap<Long, Long> map = env.descendingMap()) {
+        assertEquals(20003, map.keyCount());
+        assertEquals(20003 * VALUES_PER_KEY, map.valueCount());
+        assertEquals(20003 * VALUES_PER_KEY, map.size());
 
-      ceiling(map, 10_000L, 32_768L);
-      higher(map, 10_000L, 32_768L);
-      floor(map, Long.MAX_VALUE, 32_768L);
-      lower(map, Long.MAX_VALUE, 32_768L);
-      
-      checkContents(map.subMap(10L, 0L              ), 10L, 9L, 8L, 7L, 6L, 5L, 4L, 3L, 2L, 1L);
-      checkContents(map.subMap(10L, true,  0L, false), 10L, 9L, 8L, 7L, 6L, 5L, 4L, 3L, 2L, 1L);
-      checkContents(map.subMap(10L, true,  0L, true ), 10L, 9L, 8L, 7L, 6L, 5L, 4L, 3L, 2L, 1L, 0L);
-      checkContents(map.subMap(10L, false, 0L, true ), 9L, 8L, 7L, 6L, 5L, 4L, 3L, 2L, 1L, 0L);
-      checkContents(map.subMap(10L, false, 0L, false), 9L, 8L, 7L, 6L, 5L, 4L, 3L, 2L, 1L);
-      
-      checkContents(map.headMap(9_900L), concat(Long.valueOf(Long.MAX_VALUE), range(10_000L, true, 9_900L, true)));
-      checkContents(map.headMap(9_900L, true), concat(Long.valueOf(Long.MAX_VALUE), range(10_000L, true, 9_900L, true)));
-      checkContents(map.headMap(9_900L, false), concat(Long.valueOf(Long.MAX_VALUE), range(10_000L, true, 9_900L, false)));
+        first(map, Long.MAX_VALUE);
+        last(map, Long.MIN_VALUE);
 
-      checkContents(map.tailMap(-9_900L), concat(range(-9_900L, false, -10_000L, true), Long.valueOf(Long.MIN_VALUE)));
-      checkContents(map.tailMap(-9_900L, false), concat(range(-9_900L, false, -10_000L, true), Long.valueOf(Long.MIN_VALUE)));
-      checkContents(map.tailMap(-9_900L, true), concat(range(-9_900L, true, -10_000L, true), Long.valueOf(Long.MIN_VALUE)));
+        ceiling(map, 0L, 0L);
+        higher(map, -1L, 0L);
+        floor(map, 0L, 0L);
+        lower(map, 1L, 0L);
+
+        ceiling(map, 1000L, 1000L);
+        higher(map, 999L, 1000L);
+        floor(map, 1000L, 1000L);
+        lower(map, 1001L, 1000L);
+
+        ceiling(map, -1000L, -1000L);
+        higher(map, -1001L, -1000L);
+        floor(map, -1000L, -1000L);
+        lower(map, -999L, -1000L);
+
+        ceiling(map, Long.MIN_VALUE, -32_768L);
+        higher(map, Long.MIN_VALUE, -32_768L);
+        floor(map, -10_000L, -32_768L);
+        lower(map, -10_000L, -32_768L);
+
+        ceiling(map, 10_000L, 32_768L);
+        higher(map, 10_000L, 32_768L);
+        floor(map, Long.MAX_VALUE, 32_768L);
+        lower(map, Long.MAX_VALUE, 32_768L);
+
+        checkContents(map.subMap(10L, 0L), 10L, 9L, 8L, 7L, 6L, 5L, 4L, 3L, 2L, 1L);
+        checkContents(map.subMap(10L, true, 0L, false), 10L, 9L, 8L, 7L, 6L, 5L, 4L, 3L, 2L, 1L);
+        checkContents(map.subMap(10L, true, 0L, true), 10L, 9L, 8L, 7L, 6L, 5L, 4L, 3L, 2L, 1L, 0L);
+        checkContents(map.subMap(10L, false, 0L, true), 9L, 8L, 7L, 6L, 5L, 4L, 3L, 2L, 1L, 0L);
+        checkContents(map.subMap(10L, false, 0L, false), 9L, 8L, 7L, 6L, 5L, 4L, 3L, 2L, 1L);
+
+        checkContents(map.headMap(9_900L), concat(Long.valueOf(Long.MAX_VALUE), range(10_000L, true, 9_900L, true)));
+        checkContents(map.headMap(9_900L, true), concat(Long.valueOf(Long.MAX_VALUE), range(10_000L, true, 9_900L, true)));
+        checkContents(map.headMap(9_900L, false), concat(Long.valueOf(Long.MAX_VALUE), range(10_000L, true, 9_900L, false)));
+
+        checkContents(map.tailMap(-9_900L), concat(range(-9_900L, false, -10_000L, true), Long.valueOf(Long.MIN_VALUE)));
+        checkContents(map.tailMap(-9_900L, false), concat(range(-9_900L, false, -10_000L, true), Long.valueOf(Long.MIN_VALUE)));
+        checkContents(map.tailMap(-9_900L, true), concat(range(-9_900L, true, -10_000L, true), Long.valueOf(Long.MIN_VALUE)));
+      }
     }
   }
   
   @Test
   public void headMap() {
-    try (LMDBMultiMap<Long,Long> map = makeLongLongMap().headMap(1000L)) {
-      assertEquals(11001, map.keyCount());
-      assertEquals(11001 * VALUES_PER_KEY, map.valueCount());
-      assertEquals(11001 * VALUES_PER_KEY, map.size());
-      
-      first(map, Long.MIN_VALUE);
-      last(map, 999L);
-      
-      ceiling(map, 0L, 0L);
-      higher(map, 1L, 0L);
-      floor(map, 0L, 0L);
-      lower(map, -1L, 0L);
-      
-      ceiling(map, null, 1000L);
-      higher(map, null, 1000L);
-      
-      floor(map, 999L, 1000L);
-      lower(map, 999L, 1000L);
+    // Note: We must retain a references to the LMDBMultiMapStandalone so it doesn't get garbage collected and close
+    //       all of our outstanding transactions before we are done using it.
+    // TODO: Come up with a better way to handle this
+    try (LMDBMultiMapStandalone<Long,Long> env = makeLongLongMap()) {
+      try (LMDBMultiMap<Long, Long> map = env.headMap(1000L)) {
+        assertEquals(11001, map.keyCount());
+        assertEquals(11001 * VALUES_PER_KEY, map.valueCount());
+        assertEquals(11001 * VALUES_PER_KEY, map.size());
 
-      ceiling(map, -1000L, -1000L);
-      higher(map, -999L, -1000L);
-      floor(map, -1000L, -1000L);
-      lower(map, -1001L, -1000L);
-      
-      assertTrue(map.removeAll(0L));
-      
-      ceiling(map, 1L, 0L);
-      higher(map, 1L, 0L);
-      floor(map, -1L, 0L);
-      lower(map, -1L, 0L);
+        first(map, Long.MIN_VALUE);
+        last(map, 999L);
 
-      assertTrue(map.add(-1_000_000L, -123L));
-      try { map.add(1_000_000L, 123L); fail(); } catch (LMDBOutOfRangeException ex) { /* good */ }
+        ceiling(map, 0L, 0L);
+        higher(map, 1L, 0L);
+        floor(map, 0L, 0L);
+        lower(map, -1L, 0L);
+
+        ceiling(map, null, 1000L);
+        higher(map, null, 1000L);
+
+        floor(map, 999L, 1000L);
+        lower(map, 999L, 1000L);
+
+        ceiling(map, -1000L, -1000L);
+        higher(map, -999L, -1000L);
+        floor(map, -1000L, -1000L);
+        lower(map, -1001L, -1000L);
+
+        assertTrue(map.removeAll(0L));
+
+        ceiling(map, 1L, 0L);
+        higher(map, 1L, 0L);
+        floor(map, -1L, 0L);
+        lower(map, -1L, 0L);
+
+        assertTrue(map.add(-1_000_000L, -123L));
+        try { map.add(1_000_000L, 123L); fail(); } catch (LMDBOutOfRangeException ex) { /* good */ }
+      }
     }
   }
   
   @Test
   public void tailMap() {
-    try (LMDBMultiMap<Long,Long> map = makeLongLongMap().tailMap(-1000L)) {
-      assertEquals(11002, map.keyCount());
-      assertEquals(11002 * VALUES_PER_KEY, map.valueCount());
-      assertEquals(11002 * VALUES_PER_KEY, map.size());
-      
-      first(map, -1000L);
-      last(map, Long.MAX_VALUE);
-      
-      ceiling(map, 0L, 0L);
-      higher(map, 1L, 0L);
-      floor(map, 0L, 0L);
-      lower(map, -1L, 0L);
-      
-      ceiling(map, 1000L, 1000L);
-      higher(map, 1001L, 1000L);
-      floor(map, 1000L, 1000L);
-      lower(map, 999L, 1000L);
-      
-      ceiling(map, -1000L, -1000L);
-      higher(map, -999L, -1000L);
-      floor(map, -1000L, -1000L);
-      lower(map, null, -1000L);
-      
-      assertTrue(map.removeAll(0L));
-      
-      ceiling(map, 1L, 0L);
-      higher(map, 1L, 0L);
-      floor(map, -1L, 0L);
-      lower(map, -1L, 0L);
-      
-      try { map.add(-1_000_000L, -123L); fail(); } catch (LMDBOutOfRangeException ex) { /* good */ }
-      assertTrue(map.add(1_000_000L, 123L));
+    // Note: We must retain a references to the LMDBMultiMapStandalone so it doesn't get garbage collected and close
+    //       all of our outstanding transactions before we are done using it.
+    // TODO: Come up with a better way to handle this
+    try (LMDBMultiMapStandalone<Long,Long> env = makeLongLongMap()) {
+      try (LMDBMultiMap<Long, Long> map = env.tailMap(-1000L)) {
+        assertEquals(11002, map.keyCount());
+        assertEquals(11002 * VALUES_PER_KEY, map.valueCount());
+        assertEquals(11002 * VALUES_PER_KEY, map.size());
+
+        first(map, -1000L);
+        last(map, Long.MAX_VALUE);
+
+        ceiling(map, 0L, 0L);
+        higher(map, 1L, 0L);
+        floor(map, 0L, 0L);
+        lower(map, -1L, 0L);
+
+        ceiling(map, 1000L, 1000L);
+        higher(map, 1001L, 1000L);
+        floor(map, 1000L, 1000L);
+        lower(map, 999L, 1000L);
+
+        ceiling(map, -1000L, -1000L);
+        higher(map, -999L, -1000L);
+        floor(map, -1000L, -1000L);
+        lower(map, null, -1000L);
+
+        assertTrue(map.removeAll(0L));
+
+        ceiling(map, 1L, 0L);
+        higher(map, 1L, 0L);
+        floor(map, -1L, 0L);
+        lower(map, -1L, 0L);
+
+        try { map.add(-1_000_000L, -123L); fail(); } catch (LMDBOutOfRangeException ex) { /* good */ }
+        assertTrue(map.add(1_000_000L, 123L));
+      }
     }
   }
   
   @Test
   public void subMap() {
-    try (LMDBMultiMap<Long,Long> map = makeLongLongMap().subMap(-1000L, 1000L)) {
-      assertEquals(2000, map.keyCount());
-      assertEquals(2000 * VALUES_PER_KEY, map.valueCount());
-      assertEquals(2000 * VALUES_PER_KEY, map.size());
-      
-      first(map, -1000L);
-      last(map, 999L);
-      
-      ceiling(map, 0L, 0L);
-      higher(map, 1L, 0L);
-      floor(map, 0L, 0L);
-      lower(map, -1L, 0L);
-      
-      ceiling(map, null, 1000L);
-      higher(map, null, 1000L);
-      floor(map, 999L, 1000L);
-      lower(map, 999L, 1000L);
-      
-      ceiling(map, -1000L, -1000L);
-      higher(map, -999L, -1000L);
-      floor(map, -1000L, -1000L);
-      lower(map, null, -1000L);
-      
-      assertTrue(map.removeAll(0L));
-      
-      ceiling(map, 1L, 0L);
-      higher(map, 1L, 0L);
-      floor(map, -1L, 0L);
-      lower(map, -1L, 0L);
-      
-      try { map.add(-1_000_000L, -123L); fail(); } catch (LMDBOutOfRangeException ex) { /* good */ }
-      try { map.add(1_000_000L, 123L); fail(); } catch (LMDBOutOfRangeException ex) { /* good */ }
+    // Note: We must retain a references to the LMDBMultiMapStandalone so it doesn't get garbage collected and close
+    //       all of our outstanding transactions before we are done using it.
+    // TODO: Come up with a better way to handle this
+    try (LMDBMultiMapStandalone<Long,Long> env = makeLongLongMap()) {
+      try (LMDBMultiMap<Long, Long> map = env.subMap(-1000L, 1000L)) {
+        assertEquals(2000, map.keyCount());
+        assertEquals(2000 * VALUES_PER_KEY, map.valueCount());
+        assertEquals(2000 * VALUES_PER_KEY, map.size());
+
+        first(map, -1000L);
+        last(map, 999L);
+
+        ceiling(map, 0L, 0L);
+        higher(map, 1L, 0L);
+        floor(map, 0L, 0L);
+        lower(map, -1L, 0L);
+
+        ceiling(map, null, 1000L);
+        higher(map, null, 1000L);
+        floor(map, 999L, 1000L);
+        lower(map, 999L, 1000L);
+
+        ceiling(map, -1000L, -1000L);
+        higher(map, -999L, -1000L);
+        floor(map, -1000L, -1000L);
+        lower(map, null, -1000L);
+
+        assertTrue(map.removeAll(0L));
+
+        ceiling(map, 1L, 0L);
+        higher(map, 1L, 0L);
+        floor(map, -1L, 0L);
+        lower(map, -1L, 0L);
+
+        try { map.add(-1_000_000L, -123L); fail(); } catch (LMDBOutOfRangeException ex) { /* good */ }
+        try { map.add(1_000_000L, 123L); fail(); } catch (LMDBOutOfRangeException ex) { /* good */ }
+      }
     }
   }
 

@@ -22,11 +22,11 @@ import java.util.Iterator;
 import java.util.Objects;
 
 class LMDBMultiSetView<V> extends LMDBMultiSetInternal<V> {
-  private static enum CeilingMode {
+  private enum CeilingMode {
     NoPossibleMatch, UseHigher, UseCeiling
   }
 
-  private static enum FloorMode {
+  private enum FloorMode {
     NoPossibleMatch, UseLower, UseFloor
   }
 

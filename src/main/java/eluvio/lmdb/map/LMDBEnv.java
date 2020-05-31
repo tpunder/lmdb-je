@@ -15,8 +15,6 @@
  */
 package eluvio.lmdb.map;
 
-import eluvio.lmdb.api.Api;
-
 public interface LMDBEnv extends AutoCloseable {
   /**
    * By default we set mdb_env_set_mapsize to 1TB which should be large enough
@@ -24,12 +22,12 @@ public interface LMDBEnv extends AutoCloseable {
    * <p>
    * This is just the maximum size that the database can grow to.
    */
-  final static long DEFAULT_MAPSIZE = 1099511627776L; // 1TB
+  long DEFAULT_MAPSIZE = 1099511627776L; // 1TB
 
   /**
    * The maximum numbers of readers we can have accessing the DB
    */
-  final static int DEFAULT_MAXREADERS = 4096;
+  int DEFAULT_MAXREADERS = 4096;
   
   /**
    * Abort the current transaction for this thread
@@ -84,7 +82,7 @@ public interface LMDBEnv extends AutoCloseable {
   /**
    * Enable the MDB_NOMETASYNC flag
    */
-  public void disableMetaSync();
+  void disableMetaSync();
   
   /**
    * Disable the MDB_NOMETASYNC flag
@@ -95,7 +93,7 @@ public interface LMDBEnv extends AutoCloseable {
    * committed transaction. I.e. it preserves the ACI (atomicity, consistency, isolation) but 
    * not D (durability) database property.
    */
-  public void enableMetaSync();
+  void enableMetaSync();
   
   /**
    * Enable the MDB_NOSYNC flag

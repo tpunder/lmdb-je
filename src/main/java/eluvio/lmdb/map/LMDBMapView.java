@@ -834,7 +834,11 @@ class LMDBMapView<K, V> extends LMDBMapInternal<K, V> {
   }
   
   @Override
-  public void enableSync() {
-    map.enableSync();
-  }
+  public void enableSync() { map.enableSync(); }
+
+  @Override
+  public void sync() { map.sync(); }
+
+  @Override
+  public void sync(boolean force) { map.sync(force); }
 }

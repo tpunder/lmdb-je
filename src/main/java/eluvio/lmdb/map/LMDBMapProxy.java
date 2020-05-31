@@ -459,7 +459,11 @@ class LMDBMapProxy<K, V> extends LMDBMapInternal<K, V> {
   }
   
   @Override
-  public void enableSync() {
-    self.enableSync();
-  }
+  public void enableSync() { self.enableSync(); }
+
+  @Override
+  public void sync() { self.sync(); }
+
+  @Override
+  public void sync(boolean force) { self.sync(force); }
 }

@@ -1288,4 +1288,10 @@ class LMDBMapImpl<K,V> extends LMDBMapInternal<K,V> {
   public void enableSync() {
     env.enableSync();
   }
+
+  @Override
+  public void sync() { env.sync(); }
+
+  @Override
+  public void sync(boolean force) { env.sync(force); }
 }

@@ -112,4 +112,19 @@ public interface LMDBEnv extends AutoCloseable {
    * Disable the MDB_NOSYNC flag
    */
   void enableSync();
+
+  /**
+   * Flush the data buffers to disk.
+   *
+   * Note: If MDB_NOSYNC is set then use force(true)
+   */
+  void sync();
+
+  /**
+   * Flush the data buffers to disk.
+   *
+   * @param force If non-zero, force a synchronous flush. Otherwise if the environment has the MDB_NOSYNC flag set the
+   *              flushes will be omitted, and with MDB_MAPASYNC they will be asynchronous.
+   */
+  void sync(boolean force);
 }

@@ -257,4 +257,10 @@ class LMDBMultiMapImpl<K, V> implements LMDBMultiMap<K, V> {
   public void enableSync() {
     map.enableSync();
   }
+
+  @Override
+  public void sync() { map.sync(); }
+
+  @Override
+  public void sync(boolean force) { map.sync(force); }
 }

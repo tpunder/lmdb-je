@@ -230,4 +230,14 @@ class LMDBEnvImpl extends LMDBEnvInternal {
   public void enableSync() {
     env.enableSync();
   }
+
+  @Override
+  public void sync() {
+    env.sync();
+  }
+
+  @Override
+  public void sync(boolean force) {
+    env.sync(force);
+  }
 }

@@ -242,4 +242,10 @@ class LMDBMultiSetReversed<V> extends LMDBMultiSetInternal<V> {
   public void enableSync() {
     set.enableSync();
   }
+
+  @Override
+  public void sync() { set.sync(); }
+
+  @Override
+  public void sync(boolean force) { set.sync(force); }
 }

@@ -124,7 +124,7 @@ class Loader {
     final String os = platform.getOS().name().toLowerCase();
     final String cpu = platform.getCPU().name().toLowerCase();
     
-    return "lmdb-je/"+os+"_"+cpu+"/liblmdb.so";
+    return "lmdb-je/liblmdb_"+os+"_"+cpu+".so";
   }
   
   private static Logger logger() {

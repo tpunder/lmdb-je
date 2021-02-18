@@ -29,6 +29,8 @@ Helper runtime scripts were created via:
 
     docker run --rm dockcross/linux-x64 > ./dockcross-linux-x64
     chmod +x ./dockcross-linux-x64
+    docker run --rm dockcross/linux-arm64 > ./dockcross-linux-arm64
+    chmod +x ./dockcross-linux-arm64
     docker run --rm dockcross/windows-static-x64 > ./dockcross-windows-static-x64
     chmod +x ./dockcross-windows-static-x64
 

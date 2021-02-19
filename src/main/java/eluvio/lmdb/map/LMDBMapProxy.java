@@ -309,9 +309,10 @@ class LMDBMapProxy<K, V> extends LMDBMapInternal<K, V> {
   }
 
   @Override
-  public K pollFirstKey() {
-    return self.pollFirstKey();
-  }
+  public K pollFirstKey() { return self.pollFirstKey(); }
+
+  @Override
+  public V pollFirstValue() { return self.pollFirstValue(); }
 
   @Override
   public java.util.Map.Entry<K, V> pollLastEntry() {
@@ -322,6 +323,9 @@ class LMDBMapProxy<K, V> extends LMDBMapInternal<K, V> {
   public K pollLastKey() {
     return self.pollLastKey();
   }
+
+  @Override
+  public V pollLastValue() { return self.pollLastValue(); }
 
   @Override
   public boolean prepend(K key, V value) {

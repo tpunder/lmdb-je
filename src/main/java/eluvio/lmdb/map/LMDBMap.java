@@ -84,7 +84,7 @@ public interface LMDBMap<K, V> extends LMDBEnv, ConcurrentNavigableMap<K, V>, Co
   LMDBKeySet<K> navigableKeySet();
 
   /**
-   * Retrieves and removes the first (lowest) key, or returns null if this set
+   * Retrieves and removes the first (lowest) key, or returns null if this map
    * is empty.
    * 
    * @return the first key, or null if the map is empty
@@ -93,13 +93,30 @@ public interface LMDBMap<K, V> extends LMDBEnv, ConcurrentNavigableMap<K, V>, Co
   K pollFirstKey();
 
   /**
-   * Retrieves and removes the last (highest) key, or returns null if this set
+   * Retrieves and removes the first (lowest) key's value, or returns null if this map
+   * is empty.
+   *
+   * @return the first value, or null if the map is empty
+   */
+  V pollFirstValue();
+
+  /**
+   * Retrieves and removes the last (highest) key, or returns null if this map
    * is empty.
    * 
    * @return the last key, or null if the map is empty
    * @see LMDBKeySet#pollLast
    */
   K pollLastKey();
+
+  /**
+   * Retrieves and removes the last (highest) key's value, or returns null if this map
+   * is empty.
+   *
+   * @return the last key, or null if the map is empty
+   * @see LMDBKeySet#pollLast
+   */
+  V pollLastValue();
 
   /**
    * A possibly optimized {@link #putNoPrev} operation when you know they key is

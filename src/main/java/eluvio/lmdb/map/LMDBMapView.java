@@ -610,6 +610,12 @@ class LMDBMapView<K, V> extends LMDBMapInternal<K, V> {
   }
 
   @Override
+  public V pollFirstValue() {
+    Map.Entry<K, V> entry = pollFirstEntry();
+    return null == entry ? null : entry.getValue();
+  }
+
+  @Override
   public Map.Entry<K, V> pollLastEntry() {
     if (null == toKey) return map.pollLastEntry();
     try (LMDBTxnInternal txn = map.withReadWriteTxn()) {
@@ -627,6 +633,12 @@ class LMDBMapView<K, V> extends LMDBMapInternal<K, V> {
       if (null != key) remove(key);
       return key;
     }
+  }
+
+  @Override
+  public V pollLastValue() {
+    Map.Entry<K, V> entry = pollLastEntry();
+    return null == entry ? null : entry.getValue();
   }
 
   @Override

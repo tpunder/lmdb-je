@@ -970,6 +970,20 @@ class LMDBMapImpl<K,V> extends LMDBMapInternal<K,V> {
       return entry;
     }
   }
+
+  @Override
+  public V pollFirstValue() {
+    try (
+      LMDBTxnInternal txn = withReadWriteTxn();
+      Cursor cursor = db.openCursor(txn.txn())
+    ) {
+      KeyAndData res = cursor.first();
+      if (null == res) return null;
+      V value = toValue(res);
+      cursor.delete();
+      return value;
+    }
+  }
   
   @Override
   public Map.Entry<K,V> pollLastEntry() {
@@ -982,6 +996,20 @@ class LMDBMapImpl<K,V> extends LMDBMapInternal<K,V> {
       Map.Entry<K,V> entry = toMapEntry(res);
       cursor.delete();
       return entry;
+    }
+  }
+
+  @Override
+  public V pollLastValue() {
+    try (
+      LMDBTxnInternal txn = withReadWriteTxn();
+      Cursor cursor = db.openCursor(txn.txn())
+    ) {
+      KeyAndData res = cursor.last();
+      if (null == res) return null;
+      V value = toValue(res);
+      cursor.delete();
+      return value;
     }
   }
   

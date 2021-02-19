@@ -410,9 +410,10 @@ class LMDBMapReversed<K, V> extends LMDBMapInternal<K, V> {
   }
 
   @Override
-  public K pollFirstKey() {
-    return map.pollLastKey();
-  }
+  public K pollFirstKey() { return map.pollLastKey(); }
+
+  @Override
+  public V pollFirstValue() { return map.pollLastValue(); }
 
   @Override
   public Map.Entry<K, V> pollLastEntry() {
@@ -420,9 +421,10 @@ class LMDBMapReversed<K, V> extends LMDBMapInternal<K, V> {
   }
 
   @Override
-  public K pollLastKey() {
-    return map.pollFirstKey();
-  }
+  public K pollLastKey() { return map.pollFirstKey(); }
+
+  @Override
+  public V pollLastValue() { return map.pollFirstValue(); }
 
   @Override
   public boolean prepend(K key, V value) {

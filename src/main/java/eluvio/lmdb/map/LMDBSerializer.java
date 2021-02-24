@@ -15,6 +15,7 @@
  */
 package eluvio.lmdb.map;
 
+import java.io.*;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.StandardCharsets;
@@ -219,4 +220,41 @@ public abstract class LMDBSerializer<T> {
       return b;
     }
   };
+
+  /**
+   * A serializer for Java objects using ObjectOutputStream/ObjectInputStream. This isn't very efficient since it first
+   * converts to and from byte arrays.
+   */
+  public final static class ObjectSerializer<E> extends LMDBSerializer<E> {
+    public int cachedBufferSize() { return -1; }
+    public boolean integerKeys() { return false; }
+    public boolean fixedSize() { return false; }
+
+    public ByteBuffer serialize(E elem, ByteBuffer buf) {
+      final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+
+      try(final ObjectOutputStream oos = new ObjectOutputStream(bos)) {
+        oos.writeObject(elem);
+      } catch (IOException ex) {
+        // This should not happen (unless maybe we run out of memory or something)
+        throw new RuntimeException(ex);
+      }
+
+      final byte[] bytes = bos.toByteArray();
+      return ByteArray.serialize(bytes, buf);
+    }
+
+    public E deserialize(ByteBuffer buf) {
+      final byte[] bytes = ByteArray.deserialize(buf);
+
+      try(final ByteArrayInputStream bis = new ByteArrayInputStream(bytes); final ObjectInputStream ois = new ObjectInputStream(bis)) {
+        return (E)ois.readObject();
+      } catch (IOException ex) {
+        // This should not happen (unless maybe we run out of memory or something)
+        throw new RuntimeException(ex);
+      } catch (ClassNotFoundException ex) {
+        throw new RuntimeException(ex);
+      }
+    }
+  }
 }

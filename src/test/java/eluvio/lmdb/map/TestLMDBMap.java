@@ -17,6 +17,7 @@ package eluvio.lmdb.map;
 
 import static org.junit.Assert.*;
 
+import java.io.Serializable;
 import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleImmutableEntry;
 import java.util.Map;
@@ -24,7 +25,35 @@ import java.util.Map;
 import org.junit.Test;
 
 public class TestLMDBMap extends TestLMDBCommon {
-  
+
+  interface Foo extends Serializable {
+    String tpe();
+  }
+
+  final static class Bar implements Foo {
+    public String bar = "bar";
+    public String tpe() { return "bar"; }
+  }
+
+  final static class Baz implements Foo {
+    public String baz = "baz";
+    public String tpe() { return "baz"; }
+  }
+
+  @Test
+  public void objectSerialization() {
+    try (LMDBMapStandalone<String,Foo> map = new LMDBMapStandalone<String,Foo>(LMDBSerializer.String, new LMDBSerializer.ObjectSerializer<Foo>())) {
+      map.put("bar", new Bar());
+      map.put("baz", new Baz());
+
+      assertEquals(map.get("bar").tpe(), "bar");
+      assertEquals(map.get("baz").tpe(), "baz");
+
+      assertEquals(map.get("bar").getClass(), Bar.class);
+      assertEquals(map.get("baz").getClass(), Baz.class);
+    }
+  }
+
   @Test
   public void empty() {
     try (LMDBMapStandalone<String,String> map = new LMDBMapStandalone<String,String>(LMDBSerializer.String, LMDBSerializer.String)) {

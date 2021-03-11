@@ -1,4 +1,9 @@
-lmdb_version := 0.9.24
+# As of 2021-03-12 this is the latest mdb.master commit.
+# Note: We need to use the mdb.master branch since it has additional fixes needed
+#       for Windows support to work right with the memory mapping to incrementally
+#       grow the data file instead of allocating everything up front. This is needed
+#       when we specify something like a 1TB Map Size.
+lmdb_version := 52bc29ee2efccf09c650598635cd42a50b6ecffe
 dir := lmdblib/libraries/liblmdb
 
 all : code linux-x64 linux-arm64 windows osx version
@@ -6,7 +11,7 @@ all : code linux-x64 linux-arm64 windows osx version
 .PHONY : all
 
 version: 
-	echo LMDB_$(lmdb_version) > src/main/resources/lmdb-je/VERSION
+	echo $(lmdb_version) > src/main/resources/lmdb-je/VERSION
 
 linux-x64:
 	cd $(dir) &&  ../../../dockcross-linux-x64 make CPP_FLAGS="-DMDB_MAXKEYSIZE=0" -e clean all
@@ -28,7 +33,7 @@ osx:
 code:
 	rm -rf lmdblib
 	mkdir lmdblib
-	cd lmdblib && curl --location https://github.com/LMDB/lmdb/archive/LMDB_$(lmdb_version).tar.gz | tar --strip-components 1 -xzf -
+	cd lmdblib && curl --location https://github.com/LMDB/lmdb/archive/$(lmdb_version).tar.gz | tar --strip-components 1 -xzf -
 
 clean:
 	rm -rf lmdblib

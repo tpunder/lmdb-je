@@ -1,9 +1,9 @@
-# As of 2021-03-12 this is the latest mdb.master commit.
+# As of 2021-05-25 this is the latest mdb.master commit.
 # Note: We need to use the mdb.master branch since it has additional fixes needed
 #       for Windows support to work right with the memory mapping to incrementally
 #       grow the data file instead of allocating everything up front. This is needed
 #       when we specify something like a 1TB Map Size.
-lmdb_version := 52bc29ee2efccf09c650598635cd42a50b6ecffe
+lmdb_version := 4b6154340c27d03592b8824646a3bc4eb7ab61f5
 dir := lmdblib/libraries/liblmdb
 
 all : code linux-x64 linux-arm64 windows osx version

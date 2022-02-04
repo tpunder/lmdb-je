@@ -1,4 +1,5 @@
 target
+.bsp
 .cache
 .scala_dependencies
 .target

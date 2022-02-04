@@ -1,11 +1,7 @@
 import com.typesafe.sbt.SbtNativePackager._
 import NativePackagerKeys._
 
-FMPublic
-
 name := "lmdb-je"
-
-organization := "com.eluvio"
 
 description := "LMDB Java Edition"
 
@@ -16,16 +12,15 @@ enablePlugins(JavaAppPackaging)
 
 //javacOptions in Compile ++= Seq("-source", "1.8", "-target", "1.8")
 
-javacOptions in doc ++= Seq("-windowtitle", "lmdb-je", "-sourcepath", "/Users/tim/java-src", "-tag", "implSpec:x", "-tag", "implNote:x", "-tag", "jls:x", "-linkoffline", "http://docs.oracle.com/javase/8/docs/api/", "http://docs.oracle.com/javase/8/docs/api/")
+doc / javacOptions ++= Seq("-windowtitle", "lmdb-je", "-sourcepath", "/Users/tim/java-src", "-tag", "implSpec:x", "-tag", "implNote:x", "-tag", "jls:x", "-linkoffline", "http://docs.oracle.com/javase/8/docs/api/", "http://docs.oracle.com/javase/8/docs/api/")
 
 // Fork for tests so we can enable assertions
-fork in Test := true
+Test / fork := true
 
 // Enable assertions
-javaOptions in Test += "-ea"
+Test / javaOptions += "-ea"
 
 autoScalaLibrary := false
-
 crossPaths := false
 
 testOptions += Tests.Argument(TestFrameworks.JUnit, "-v", "-a")
@@ -36,3 +31,7 @@ libraryDependencies ++= Seq(
   "com.novocode" % "junit-interface" % "0.11" % "test", // For running Junit tests from SBT
   "junit" % "junit" % "4.13.2" % "test"
 )
+
+publishTo := sonatypePublishToBundle.value
+
+ThisBuild / versionScheme := Some("semver-spec")

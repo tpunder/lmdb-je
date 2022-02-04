@@ -30,6 +30,11 @@ osx:
 	cd $(dir) && PATH="/bin:/usr/bin" make CPP_FLAGS="-DMDB_MAXKEYSIZE=0" -e clean all;
 	cp $(dir)/liblmdb.so src/main/resources/lmdb-je/liblmdb_darwin_x86_64.so
 
+osx-aarch64:
+	# Note: Explicitly set the path to make sure we use the Apple toolchain and not anything installed from brew
+	cd $(dir) && PATH="/bin:/usr/bin" make CPP_FLAGS="-DMDB_MAXKEYSIZE=0" -e clean all;
+	cp $(dir)/liblmdb.so src/main/resources/lmdb-je/liblmdb_darwin_aarch64.so
+
 code:
 	rm -rf lmdblib
 	mkdir lmdblib

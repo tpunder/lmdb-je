@@ -182,7 +182,7 @@ public class LMDBBlockingDeque<E> implements BlockingDeque<E> {
       throw new NullPointerException("Cannot add null element to LMDBBlockingQueue");
     }
 
-    // The nextHeadKey() and map.append() must be wrapped in the same ReadWrite Transaction
+    // The nextTailKey() and map.append() must be wrapped in the same ReadWrite Transaction
     try (final LMDBTxn txn = map.withReadWriteTxn()) {
       if (!map.append(nextTailKey(), e)) {
         releaseWriteCapacity();

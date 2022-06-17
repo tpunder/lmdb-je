@@ -16,6 +16,7 @@
 package eluvio.lmdb.api;
 
 import jnr.ffi.Pointer;
+import jnr.ffi.byref.IntByReference;
 import jnr.ffi.byref.PointerByReference;
 
 import java.io.File;
@@ -25,7 +26,9 @@ public class Env implements AutoCloseable {
   
   protected final Pointer env;
   private volatile State state = State.INIT;
-  
+
+  private boolean isNotThreadLocalTransactions = false;
+
   public Env() {
     PointerByReference ref = new PointerByReference();
     ApiErrors.checkError("mdb_env_create", Api.instance.mdb_env_create(ref));
@@ -104,6 +107,20 @@ public class Env implements AutoCloseable {
     ApiErrors.checkError("mdb_env_set_flags", Api.instance.mdb_env_set_flags(env, flags, enableOrDisable ? 1 : 0));
   }
 
+  private int getFlags() {
+    final IntByReference ref = new IntByReference();
+    ApiErrors.checkError("mdb_env_get_flags", Api.instance.mdb_env_get_flags(env, ref));
+    return ref.intValue();
+  }
+
+  public boolean isThreadLocalTransactions() {
+    return !isNotThreadLocalTransactions;
+  }
+
+  public boolean isNotThreadLocalTransactions() {
+    return isNotThreadLocalTransactions;
+  }
+
   public void open(String path) {
     open(path, 0);
   }
@@ -128,7 +145,8 @@ public class Env implements AutoCloseable {
     
     // This will throw an exception if the rc is not zero
     ApiErrors.checkError("mdb_env_open", rc);
-    
+
+    isNotThreadLocalTransactions = (flags & Api.MDB_NOTLS) == Api.MDB_NOTLS;
     state = State.OPEN;
   }
   

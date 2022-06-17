@@ -41,6 +41,11 @@ abstract class LMDBMapInternal<K, V> implements LMDBMap<K, V> {
     env().commitTxn();
   }
 
+  @Override
+  final public ReusableTxn detatchTxnFromCurrentThread() {
+    return env().detatchTxnFromCurrentThread();
+  }
+
   /**
    * An optimized version of {@link #compare(Object,Object)} that can take
    * already serialized {@link ByteBuffer}'s to prevent duplicate serialization

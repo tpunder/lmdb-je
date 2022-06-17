@@ -41,6 +41,11 @@ abstract class LMDBMultiSetInternal<V> implements LMDBMultiSet<V>, LMDBEnv {
     env().commitTxn();
   }
 
+  @Override
+  final public ReusableTxn detatchTxnFromCurrentThread() {
+    return env().detatchTxnFromCurrentThread();
+  }
+
   public abstract int compare(V a, ByteBuffer aBuf, V b, ByteBuffer bBuf);
 
   abstract LMDBEnvInternal env();

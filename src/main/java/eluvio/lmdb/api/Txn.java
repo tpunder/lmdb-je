@@ -172,6 +172,7 @@ public class Txn implements AutoCloseable {
    * Throws an exception if the current thread is not the same thread that created the transaction.
    */
   protected void threadCheck() {
+    if (env.isNotThreadLocalTransactions()) return; // We are not using Thread Local Storage for transactions so we do not need this check
     if (Thread.currentThread() != thread) throw new RuntimeException("Transaction can only be used by the thread that created it.  Creating Thread: "+thread+"  Current Thread: "+Thread.currentThread());
   }
   

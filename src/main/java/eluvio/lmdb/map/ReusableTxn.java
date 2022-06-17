@@ -22,7 +22,7 @@ import eluvio.lmdb.api.Txn;
 /**
  * ReusableTxns must be closed
  */
-final class ReusableTxn implements AutoCloseable {
+final class ReusableTxn implements LMDBTxn {
   abstract class LMDBTxnImpl extends LMDBTxnInternal {
     @Override public void commit() { close(); }
     @Override public boolean readOnly() { return txn.readOnly; }
@@ -120,6 +120,10 @@ final class ReusableTxn implements AutoCloseable {
     }
     
     readOnlyDepth = 0;
+  }
+
+  public void commit() {
+    commitTxn();
   }
 
   public void commitTxn() {

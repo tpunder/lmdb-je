@@ -57,12 +57,15 @@ class LMDBEnvImpl extends LMDBEnvInternal {
   public LMDBEnvImpl(File path, boolean readOnly, long mapsize, int maxdbs) {
     this(path, readOnly, mapsize, maxdbs, LMDBEnv.DEFAULT_MAXREADERS);
   }
-  
+
   public LMDBEnvImpl(File path, boolean readOnly, long mapsize, int maxdbs, int maxReaders) {
+    this(path, readOnly, mapsize, maxdbs, maxReaders, 0);
+  }
+
+  public LMDBEnvImpl(File path, boolean readOnly, long mapsize, int maxdbs, int maxReaders, int flags) {
     this.readOnly = readOnly;
 
     final int readOnlyFlag = readOnly ? Api.MDB_RDONLY : 0;
-    int envFlags = 0;
 
     if (null == path) {
       // We'll use a temp file as our data file and open the
@@ -77,7 +80,7 @@ class LMDBEnvImpl extends LMDBEnvInternal {
       
       // We also specify MDB_NOSYNC since we don't care if or when data is
       // written to disk since this database is thrown away.
-      envFlags = envFlags | Api.MDB_NOSUBDIR | Api.MDB_NOSYNC;
+      flags = flags | Api.MDB_NOSUBDIR | Api.MDB_NOSYNC;
       deleteOnClose = true;
       
       // System.out.println("Using temp: "+path);
@@ -92,7 +95,7 @@ class LMDBEnvImpl extends LMDBEnvInternal {
     if (maxdbs > 0) env.setMaxDBs(maxdbs); // 0 == no named databases, > 0 == Named databases
     env.setMapSize(mapsize);
     env.setMaxReaders(maxReaders);
-    env.open(path.toString(), readOnlyFlag | envFlags);
+    env.open(path.toString(), readOnlyFlag | flags);
 
     // Unlink the file so that the OS will cleanup for us when the process exits
     if (deleteOnClose) deleteTempDBAndLockFile();
@@ -133,6 +136,15 @@ class LMDBEnvImpl extends LMDBEnvInternal {
   public void beginTxn(boolean readOnly) {
     currentTxn.get().beginTxn(readOnly || this.readOnly);
 
+  }
+
+  @Override
+  public ReusableTxn detatchTxnFromCurrentThread() {
+    if (env.isThreadLocalTransactions()) throw new IllegalStateException("detatchTxnFromCurrentThread() is only applicable when using the MDB_NOTLS flag");
+    ReusableTxn txn = currentTxn.get();
+    currentTxn.remove();
+    allReusableTxns.remove(txn);
+    return txn;
   }
 
   @Override

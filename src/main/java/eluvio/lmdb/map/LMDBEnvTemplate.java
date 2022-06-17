@@ -47,9 +47,13 @@ public abstract class LMDBEnvTemplate implements LMDBEnv {
   public LMDBEnvTemplate(File path, boolean readOnly, long mapsize, int maxdbs) {
     this(path, readOnly, mapsize, maxdbs, LMDBEnv.DEFAULT_MAXREADERS);
   }
-  
+
   public LMDBEnvTemplate(File path, boolean readOnly, long mapsize, int maxdbs, int maxReaders) {
-    this.env = new LMDBEnvImpl(path, readOnly, mapsize, maxdbs, maxReaders);
+    this(path, readOnly, mapsize, maxdbs, maxReaders, 0);
+  }
+
+  public LMDBEnvTemplate(File path, boolean readOnly, long mapsize, int maxdbs, int maxReaders, int flags) {
+    this.env = new LMDBEnvImpl(path, readOnly, mapsize, maxdbs, maxReaders, flags);
     this.maps = Collections.synchronizedSet(new HashSet<LMDBMap<?,?>>());
     this.multiMaps = Collections.synchronizedSet(new HashSet<LMDBMultiMap<?,?>>());
   }
@@ -119,6 +123,11 @@ public abstract class LMDBEnvTemplate implements LMDBEnv {
   @Override
   final public void commitTxn() {
     env.commitTxn();
+  }
+
+  @Override
+  final public ReusableTxn detatchTxnFromCurrentThread() {
+    return env.detatchTxnFromCurrentThread();
   }
 
   @Override

@@ -61,6 +61,25 @@ public interface LMDBEnv extends AutoCloseable {
   void commitTxn();
 
   /**
+   * If the MDB_NOTLS flag has been set then this method can be called to detach the current ReusableTxn from the
+   * current thread. The caller is then responsible for making sure the ReusableTxn is properly closed.
+   *
+   * This was added to provide minimal support for the MDB_NOTLS flag being set. The specific use case is where we have
+   * a read only transaction that has read some data from LMDB and we need to ensure that the returned Direct ByteBuffer
+   * remains valid while we are processing an HTTP Request in a non-blocking Netty based environment where a single
+   * request might bounce around various threads. In that case we cannot simply use a try-with-resources approach.
+   *
+   * Currently, there is no way for us to re-attach a transaction to the current thread and there is also no support
+   * for being able to specify that we want a detached ReusableTxn instance to be used for specific read (or write)
+   * calls to LMDB. That is not currently required for the specific use case this is needed for, but I could imagine
+   * some sort of way to safely reattach the ReusableTxn to the current thread so that it is automatically used for
+   * any read/write LMDB calls. Perhaps we save and restore any existing ReusableTxn already attached to the thread.
+   *
+   * @return The ReusableTxn instance that has been detached from the current Thread
+   */
+  ReusableTxn detatchTxnFromCurrentThread();
+
+  /**
    * Is this a read-only environment?
    * 
    * @return true if this environment is read-only

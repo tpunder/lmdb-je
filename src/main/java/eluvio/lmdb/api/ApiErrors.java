@@ -62,7 +62,7 @@ public final class ApiErrors {
   public static LMDBException toException(String name, int rc) {
     if (0 == rc) throw new AssertionError("Cannot call this method with an rc of 0");
     
-    final String message = name+" - "+Api.instance.mdb_strerror(rc);
+    final String message = name+" - "+rc+" - "+Api.instance.mdb_strerror(rc);
     
     switch(rc) {
       case MDB_KEYEXIST:         return new KeyExists(rc, message);

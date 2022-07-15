@@ -169,7 +169,7 @@ public class DB {
       // If we are re-entering this thread (because we are in the same thread) then make sure it's the same transaction
       if (pendingOpeningTxn != txn) throw new AssertionError("Re-entering DB constructor with different txn!  pendingOpeningTxn: "+pendingOpeningTxn+"  txn: "+txn);
     } else {
-      // Only register the the callback if we aren't re-entering
+      // Only register the callback if we aren't re-entering
       pendingOpeningTxn = txn;
       txn.onAbortOrCommit(onAbortOrCommitCallback);
     }

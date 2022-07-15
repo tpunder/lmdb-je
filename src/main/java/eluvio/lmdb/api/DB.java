@@ -163,8 +163,11 @@ public class DB {
     // transactions in the same process. A transaction that uses
     // this function must finish (either commit or abort) before
     // any other transaction in the process may use this function.
-    pendingOpeningLock.lock();
-    
+
+    // If the current thread already holds the lock then do not re-lock (which increases the hold count) since we only
+    // unlock once per transaction.
+    if (!pendingOpeningLock.isHeldByCurrentThread()) pendingOpeningLock.lock();
+
     if (null != pendingOpeningTxn) {
       // If we are re-entering this thread (because we are in the same thread) then make sure it's the same transaction
       if (pendingOpeningTxn != txn) throw new AssertionError("Re-entering DB constructor with different txn!  pendingOpeningTxn: "+pendingOpeningTxn+"  txn: "+txn);

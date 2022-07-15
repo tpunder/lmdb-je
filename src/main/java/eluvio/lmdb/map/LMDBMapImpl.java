@@ -155,11 +155,15 @@ class LMDBMapImpl<K,V> extends LMDBMapInternal<K,V> {
       // Create the named database if it doesn't exist. This option is not allowed in a read-only transaction or a read-only environment.
       dbFlags = dbFlags | Api.MDB_CREATE;
     }
-    
-    db = new DB(txn, name, dbFlags, comparator, dupComparator);
-    
-    txn.commit();
-    
+
+    // We need to make sure the transaction either commits or aborts, so we trigger unlocking of our DB.pendingOpeningLock
+    try {
+      db = new DB(txn, name, dbFlags, comparator, dupComparator);
+      txn.commit();
+    } catch (Throwable ex) {
+      txn.abort();
+    }
+
     reversed = new LMDBMapReversed<K,V>(this);
     keySet = new LMDBKeySet<K>(this);
     entrySet = new LMDBEntrySet<K,V>(this);

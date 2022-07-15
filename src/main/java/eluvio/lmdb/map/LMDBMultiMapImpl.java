@@ -204,8 +204,8 @@ class LMDBMultiMapImpl<K, V> implements LMDBMultiMap<K, V> {
   }
 
   @Override
-  final public ReusableTxn detatchTxnFromCurrentThread() {
-    return map.detatchTxnFromCurrentThread();
+  final public ReusableTxn detachTxnFromCurrentThread() {
+    return map.detachTxnFromCurrentThread();
   }
 
   @Override

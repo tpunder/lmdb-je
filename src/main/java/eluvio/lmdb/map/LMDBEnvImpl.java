@@ -139,8 +139,8 @@ class LMDBEnvImpl extends LMDBEnvInternal {
   }
 
   @Override
-  public ReusableTxn detatchTxnFromCurrentThread() {
-    if (env.isThreadLocalTransactions()) throw new IllegalStateException("detatchTxnFromCurrentThread() is only applicable when using the MDB_NOTLS flag");
+  public ReusableTxn detachTxnFromCurrentThread() {
+    if (env.isThreadLocalTransactions()) throw new IllegalStateException("detachTxnFromCurrentThread() is only applicable when using the MDB_NOTLS flag");
     ReusableTxn txn = currentTxn.get();
     currentTxn.remove();
     allReusableTxns.remove(txn);

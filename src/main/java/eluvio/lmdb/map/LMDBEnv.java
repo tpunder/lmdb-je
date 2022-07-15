@@ -77,7 +77,7 @@ public interface LMDBEnv extends AutoCloseable {
    *
    * @return The ReusableTxn instance that has been detached from the current Thread
    */
-  ReusableTxn detatchTxnFromCurrentThread();
+  ReusableTxn detachTxnFromCurrentThread();
 
   /**
    * Is this a read-only environment?

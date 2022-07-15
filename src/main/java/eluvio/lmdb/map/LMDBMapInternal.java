@@ -42,8 +42,8 @@ abstract class LMDBMapInternal<K, V> implements LMDBMap<K, V> {
   }
 
   @Override
-  final public ReusableTxn detatchTxnFromCurrentThread() {
-    return env().detatchTxnFromCurrentThread();
+  final public ReusableTxn detachTxnFromCurrentThread() {
+    return env().detachTxnFromCurrentThread();
   }
 
   /**

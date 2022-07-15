@@ -126,8 +126,8 @@ public abstract class LMDBEnvTemplate implements LMDBEnv {
   }
 
   @Override
-  final public ReusableTxn detatchTxnFromCurrentThread() {
-    return env.detatchTxnFromCurrentThread();
+  final public ReusableTxn detachTxnFromCurrentThread() {
+    return env.detachTxnFromCurrentThread();
   }
 
   @Override

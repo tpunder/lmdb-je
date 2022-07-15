@@ -68,8 +68,8 @@ public class LMDBBlockingDequeStandalone<E> extends LMDBBlockingDeque<E> impleme
   public void commitTxn() { map.commitTxn(); }
 
   @Override
-  final public ReusableTxn detatchTxnFromCurrentThread() {
-    return map.detatchTxnFromCurrentThread();
+  final public ReusableTxn detachTxnFromCurrentThread() {
+    return map.detachTxnFromCurrentThread();
   }
 
   @Override

@@ -3,7 +3,7 @@
 #       for Windows support to work right with the memory mapping to incrementally
 #       grow the data file instead of allocating everything up front. This is needed
 #       when we specify something like a 1TB Map Size.
-lmdb_version := 4b6154340c27d03592b8824646a3bc4eb7ab61f5
+lmdb_version := 3947014aed7ffe39a79991fa7fb5b234da47ad1a
 dir := lmdblib/libraries/liblmdb
 
 all : code linux-x64 linux-arm64 windows osx version
